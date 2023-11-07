@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Change Location</title>
+</head>
+<body>
+    <h1>Change Location</h1>
+    <label for="newLocation">Enter a new URL:</label>
+    <input type="text" id="newLocation" placeholder="https://www.example.com">
+    <button id="changeLocationButton">Change Location</button>
+
+    <script>
+        document.getElementById("changeLocationButton").addEventListener("click", function() {
+            var newLocation = document.getElementById("newLocation").value;
+            window.location.href = newLocation;
+        });
+    </script>
+</body>
+</html>
