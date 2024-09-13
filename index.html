@@ -1,19 +1,80 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Change Location</title>
+    <title>Change Location with History</title>
 </head>
+
 <body>
     <h1>Change Location</h1>
     <label for="newLocation">Enter a new URL:</label>
-    <input type="text" id="newLocation" placeholder="https://www.example.com">
+    <input type="text" id="newLocation" placeholder="example.com">
     <button id="changeLocationButton">Change Location</button>
 
+    <h2>History of Last 5 Pages</h2>
+    <ul id="historyList"></ul>
+
     <script>
-        document.getElementById("changeLocationButton").addEventListener("click", function() {
-            var newLocation = document.getElementById("newLocation").value;
+        // Function to update history display
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById("historyList");
+            historyList.innerHTML = ''; // Clear the current list
+
+            let history = JSON.parse(localStorage.getItem("pageHistory")) || [];
+            history.slice(-5).reverse().forEach(function (page) {
+                let listItem = document.createElement("li");
+
+                // Create clickable link
+                let link = document.createElement("a");
+                link.href = page;
+                link.textContent = page;
+                link.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    window.location.href = page;  // Opens in the same page
+                });
+
+                listItem.appendChild(link);
+                historyList.appendChild(listItem);
+            });
+        }
+
+        // Function to add to history and save to localStorage
+        function addToHistory(url) {
+            let history = JSON.parse(localStorage.getItem("pageHistory")) || [];
+            history.push(url);
+            localStorage.setItem("pageHistory", JSON.stringify(history));
+        }
+
+        // Function to handle URL submission
+        function submitURL() {
+            let newLocation = document.getElementById("newLocation").value.trim();
+
+            // Add https:// if not provided
+            if (!newLocation.startsWith("http://") && !newLocation.startsWith("https://")) {
+                newLocation = "https://" + newLocation;
+            }
+
+            // Add the new URL to the history
+            addToHistory(newLocation);
+
+            // Redirect to the new location
             window.location.href = newLocation;
+        }
+
+        // Button click event listener
+        document.getElementById("changeLocationButton").addEventListener("click", submitURL);
+
+        // Enter key event listener for the input box
+        document.getElementById("newLocation").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitURL();  // Submit on Enter key press
+            }
         });
+
+        // Initial history display
+        updateHistoryDisplay();
     </script>
 </body>
+
 </html>
